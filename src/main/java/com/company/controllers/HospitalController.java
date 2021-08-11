@@ -92,15 +92,42 @@ public class HospitalController {
 
         try {
             ps = DbConnection.getConnection().prepareStatement("UPDATE drugs" +
-                    " SET patient_id = " + patientId + ", doctor_id = " + doctorId + ")" +
+                    " SET patient_id = " + patientId + ", doctor_id = " + doctorId +
                     " WHERE id = " + drugId);
 
             ps.execute();
+            ps = DbConnection.getConnection().prepareStatement("UPDATE patients" +
+                    " SET drug_id = " + drugId +
+                    " WHERE id = " + patientId);
+            ps.execute();
+
             System.out.println("Doctor " + doctorId + " successfully assign drug " + drugId + " to the patient " + patientId);
             return true;
         } catch (SQLException e) {
-            //System.out.println("Failed to assign the drug. Try again.");
-            e.printStackTrace();
+            System.out.println("Failed to assign the drug. Try again.");
+            return false;
+        }
+    }
+
+    public static boolean setDiagnosis() {
+
+        System.out.print("Enter the patient id: ");
+        int patientId = scanner.nextInt();
+
+        System.out.print("Enter the diagnosis for the patient " + patientId + ": ");
+        String diagnosis = scanner.next();
+
+
+        try {
+            ps = DbConnection.getConnection().prepareStatement("UPDATE patients" +
+                    " SET diagnosis = '" + diagnosis +
+                    "' WHERE id = " + patientId);
+
+            ps.execute();
+            System.out.println("The diagnosis " + diagnosis + " for patient " + patientId + " is set.");
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Failed to set the diagnosis. Try again.");
             return false;
         }
     }
@@ -116,7 +143,7 @@ public class HospitalController {
             System.out.println("Successfully deleted doctor " + id);
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Failed to delete the doctor " + id + ". Try again.");
             return false;
         }
     }
@@ -132,11 +159,10 @@ public class HospitalController {
             System.out.println("Successfully deleted patient " + id);
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Failed to delete the patient " + id + ". Try again.");
             return false;
         }
     }
-
 
     public static boolean deleteDrug() {
         System.out.print("Enter the drug's id: ");
@@ -149,12 +175,9 @@ public class HospitalController {
             System.out.println("Successfully deleted drug " + id);
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Failed to delete the drug " + id + ". Try again.");
             return false;
         }
     }
-
-
-
 
 }
